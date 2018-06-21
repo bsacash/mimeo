@@ -1,0 +1,13 @@
+# R1 = Folder Rule
+## Backs up an entire directory to another location
+### original_location backup_location
+# R2 = File Rule
+## Backs up a specific file to another location
+### original_location backup_location filename
+# R3 = Recent Rule
+## Backs up the most recent N files to another location
+### original_location backup_location number_of_files_to_back_up
+
+R1: user/me/documents backup/documents
+R2: user/me/documents backup/important/big_report big_report.txt
+R3: user/me/documents backup/daily_reports/ 1

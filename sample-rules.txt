@@ -8,6 +8,6 @@
 ## Backs up the most recent N files to another location
 ### original_location backup_location number_of_files_to_back_up
 
-R1: user/me/documents backup/documents
-R2: user/me/documents backup/important/big_report big_report.txt
-R3: user/me/documents backup/daily_reports/ 1
+R1: user/me/documents, backup/documents
+R2: user/me/documents, backup/important/big_report, big_report.txt
+R3: user/me/documents, backup/daily_reports/, 1

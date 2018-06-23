@@ -12,8 +12,8 @@ class BaseRule:
     # Creates a folder which is named by the current date/time in the location of the backup_path
     def _createDirectory(self):
         time = datetime.now().strftime('%Y-%m-%d\ %H_%M_%S')
-        os.popen("mkdir {backup_path}/{time}".format(backup_path=self.backup_path,time=time))
-        return "{backup_path}/{time}".format(backup_path=self.backup_path,time=time)
+        os.popen("mkdir {backup_path}/{time}".format(backup_path=self.backup_path.replace(" ","\ "),time=time))
+        return "{backup_path}/{time}".format(backup_path=self.backup_path.replace(" ","\ "),time=time)
 
     def status(self):
         op = os.path.exists(self.original_path)
@@ -96,15 +96,16 @@ class RecentRule(BaseRule):
         else:
             return False
 
-
         # Backup the N most recent files from original_path to backup_path_time
     def run(self):
         if self.check():
-            files = os.popen("ls -t {original_path} | head -{number}".format(original_path=self.original_path,number=self.number)).read()
+            files = os.popen("ls -t {original_path} | head -{number}".format(original_path=self.original_path.replace(" ","\ "),number=self.number)).read()
             file_list = files.split("\n")[:-1] # list of N files to backup
             backup_path_time = self._createDirectory() #creates time base directory - should have access to backup_path
             for file in file_list:
-                os.popen("cp {original_path}/{file} {backup_path_time}".format(original_path=self.original_path,file=file,
+                file = file.replace(" ","\ ") # add required escape characters
+                file = file.replace("(","\(").replace(")","\)") # add required escape characters
+                os.popen("cp {original_path}/{file} {backup_path_time}".format(original_path=self.original_path.replace(" ","\ "),file=file,
                                                                               backup_path_time=backup_path_time))
             print("Success: Recent Rule")
             #print(summary)
@@ -114,13 +115,15 @@ class RecentRule(BaseRule):
 
 def process(rules_file):
     def _parse(rule):
-        return rule.split(" ")[1:]
+        rule = rule.split(":", 1)[1:] # remove rule code
+        rule = "".join(rule)
+        rule = rule.split(",")
+        rule = tuple(map(lambda x: x.strip(), rule))
+        return rule
 
     # open and parse rules file
     rules = open(rules_file, "r").read()
     rules = rules.strip().split("\n")
-
-    print(rules)
 
     for rule in rules:
         # ignore comments and blank lines
@@ -146,7 +149,7 @@ def process(rules_file):
 
 
 def main():
-    process("sample-rules.txt")
+    process("rules.txt")
 
 
 if __name__ == "__main__":

@@ -4,16 +4,20 @@ import os
 import time
 from datetime import datetime
 
+import shutil
+
 class BaseRule:
     def __init__(self, original_path, backup_path):
         self.original_path = original_path
         self.backup_path = backup_path
 
     # Creates a folder which is named by the current date/time in the location of the backup_path
-    def _createDirectory(self):
-        time = datetime.now().strftime('%Y-%m-%d\ %H_%M_%S')
-        os.popen("mkdir {backup_path}/{time}".format(backup_path=self.backup_path.replace(" ","\ "),time=time))
-        return "{backup_path}/{time}".format(backup_path=self.backup_path.replace(" ","\ "),time=time)
+    def _createDirectory(self, mkdir=True):
+        time = datetime.now().strftime('%Y-%m-%d %H_%M_%S')
+        bpt = os.path.join(self.backup_path, time)
+        if mkdir:
+            os.mkdir(bpt)
+        return bpt
 
     def status(self):
         op = os.path.exists(self.original_path)
@@ -35,11 +39,14 @@ class BaseRule:
 class FolderRule(BaseRule):
     def run(self):
         if self.check():
-            backup_path_time = self._createDirectory()
-            os.popen("cp {original_path}/* {backup_path_time}".format(original_path=self.original_path, backup_path_time=backup_path_time))
-            print("Success: Folder Rule")
+            backup_path_time = self._createDirectory(mkdir=False)
+            r = shutil.copytree(self.original_path, backup_path_time)
+            if os.path.exists(r):
+                print("Success: Folder Rule")
+            else:
+                print("Error: Write failed for Folder Rule")
         else:
-            print("ERROR: Check failed for Folder Rule.")
+            print("Error: Check failed for Folder Rule")
             print(self.status())
 
 
@@ -50,7 +57,7 @@ class FileRule(BaseRule):
 
     def status(self):
         state = BaseRule.status(self)
-        fn = os.path.exists(self.original_path + "/{filename}".format(filename=self.filename))
+        fn = os.path.exists(os.path.join(self.original_path, self.filename))
         state["Filname"] = fn
         return state
 
@@ -65,12 +72,14 @@ class FileRule(BaseRule):
     def run(self):
         if self.check():
             backup_path_time = self._createDirectory()
-            os.popen("cp {original_path}/{filename} {backup_path_time}".format(original_path=self.original_path,filename=self.filename,
-                                                                      backup_path_time=backup_path_time))
-            print("Success: File Rule")
+            r = shutil.copy2(os.path.join(self.original_path, self.filename), backup_path_time)
+            if os.path.exists(r):
+                print("Success: File Rule")
+            else:
+                print("Error: Write failed for File Rule")
             #print(summary)
         else:
-            print("ERROR: Check failed for File Rule.")
+            print("Error: Check failed for File Rule")
             print(self.status())
 
 
@@ -81,8 +90,9 @@ class RecentRule(BaseRule):
 
     def status(self):
         state = BaseRule.status(self)
-        #TODO: need try/except to deal with string/floats and turing string numbers to ints
+        #TODO: need try/except to deal with string/floats and turming string numbers to ints
         if isinstance(int(self.number), int) and int(self.number) > 0:
+            self.number = int(self.number)
             state["Number"] = True
         else:
             state["Number"] = False
@@ -99,18 +109,31 @@ class RecentRule(BaseRule):
         # Backup the N most recent files from original_path to backup_path_time
     def run(self):
         if self.check():
-            files = os.popen("ls -t {original_path} | head -{number}".format(original_path=self.original_path.replace(" ","\ "),number=self.number)).read()
-            file_list = files.split("\n")[:-1] # list of N files to backup
-            backup_path_time = self._createDirectory() #creates time base directory - should have access to backup_path
-            for file in file_list:
-                file = file.replace(" ","\ ") # add required escape characters
-                file = file.replace("(","\(").replace(")","\)") # add required escape characters
-                os.popen("cp {original_path}/{file} {backup_path_time}".format(original_path=self.original_path.replace(" ","\ "),file=file,
-                                                                              backup_path_time=backup_path_time))
-            print("Success: Recent Rule")
-            #print(summary)
+            # this pulls .DS_Store - look into ignoring this in the future
+            os.chdir(self.original_path)
+            files = filter(os.path.isfile, os.listdir(self.original_path))
+            files = [os.path.join(self.original_path, f) for f in files]
+            files.sort(key=lambda x: os.path.getmtime(x))
+            file_list = files[-self.number:] # list of N most recent files to backup
+
+
+            backup_path_time = self._createDirectory()
+            mini_log = []
+            for index, file in enumerate(file_list):
+                r = shutil.copy2(file, backup_path_time)
+                if os.path.exists(r):
+                    mini_log.append(True)
+                else:
+                    mini_log.append(False)
+                    print("Error: Write failed for file {} in Recent Rule".format(index+1))
+
+            if sum(mini_log) == len(mini_log):
+                print("Success: Recent Rule")
+                #print(summary)
+            else:
+                print("Error: Write failed for Recent Rule")
         else:
-            print("ERROR: Check failed for Recent Rule.")
+            print("Error: Check failed for Recent Rule")
             print(self.status())
 
 def process(rules_file):

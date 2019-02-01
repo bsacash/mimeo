@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 import os
-import time
-from datetime import datetime
-
+import json
 import shutil
+#mport time
+from datetime import datetime
 
 class BaseRule:
     def __init__(self, original_path, backup_path):
@@ -58,7 +58,7 @@ class FileRule(BaseRule):
     def status(self):
         state = BaseRule.status(self)
         fn = os.path.exists(os.path.join(self.original_path, self.filename))
-        state["Filname"] = fn
+        state["Filename"] = fn
         return state
 
     # Verify all rule parts are valid
@@ -136,43 +136,30 @@ class RecentRule(BaseRule):
             print("Error: Check failed for Recent Rule")
             print(self.status())
 
+
+
 def process(rules_file):
-    def _parse(rule):
-        rule = rule.split(":", 1)[1:] # remove rule code
-        rule = "".join(rule)
-        rule = rule.split(",")
-        rule = tuple(map(lambda x: x.strip(), rule))
-        return rule
+    rules_json = open(rules_file, "r").read()
+    rules = json.loads(rules_json)["rules"]
 
-    # open and parse rules file
-    rules = open(rules_file, "r").read()
-    rules = rules.strip().split("\n")
-
+    #TODO: Spaces in path names haev to be escaped in the json file.  Make sure spaces can be accepted (but the backup_path_time works with spaces??)
+    #TODO: Pass rule description to run() so errors can point to exact rule
     for rule in rules:
-        # ignore comments and blank lines
-        if len(rule) == 0:
-            continue
-        if rule[0] == "#":
-            continue
-        time.sleep(1)
-        if rule[:2] == "R1":
-            op, bp =  _parse(rule)
-            r = FolderRule(op,bp)
-            r.run()
-        elif rule[:2] == "R2":
-            op, bp, filename = _parse(rule)
-            r = FileRule(op,bp,filename)
-            r.run()
-        elif rule[:2] == "R3":
-            op, bp, number = _parse(rule)
-            r = RecentRule(op,bp,number)
-            r.run()
+        if rule["type"] == "FileRule":
+            f = FileRule(rule["original_path"], rule["backup_path"], rule["file"])
+            f.run()
+        elif rule["type"] == "FolderRule":
+            f = FolderRule(rule["original_path"], rule["backup_path"])
+            f.run()
+        elif rule["type"] == "RecentRule":
+            f = RecentRule(rule["original_path"], rule["backup_path"], rule["number"])
+            f.run()
         else:
-            print("Invalid Rule Code: {code}".format(code = rule[:2]))
+            print("Invalid Rule Type: {}".format(rule["type"]))
 
 
 def main():
-    process("rules.txt")
+    process("rules.json")
 
 
 if __name__ == "__main__":

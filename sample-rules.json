@@ -1,0 +1,25 @@
+{
+  "rules": [
+      {
+      "type":"RecentRule",
+      "original_path":"",
+      "backup_path": "",
+      "number": 1,
+      "description":"Backup the newest file from original_path to backup_path"
+    },
+      {
+      "type":"FileRule",
+      "original_path":"",
+      "backup_path": "",
+      "file": "hello.txt",
+      "description":"Backup the file hello.txt from original_path to backup_path"
+    },
+      {
+      "type":"FolderRule",
+      "original_path":"/Documents",
+      "backup_path": "",
+      "description":"Backup the folder Documents from original_path to backup_path"
+    }
+  ],
+  "about": {"text":"Read the README to learn about writing rules"}
+}

@@ -14,7 +14,7 @@ Modify the rules.json file to include as many rules as needed.
 Examples:
 ```
 {
-  "id": 1,
+  "id": "1",
   "type":"RecentRule",
   "original_path":"/Users/Me/Downloads",
   "backup_path": "/Users/Me/iCloud/Backup/Downloads",
@@ -22,14 +22,14 @@ Examples:
   "description":"Backup the 3 most recent downloads to iCloud"
 },
 {
-  "id": 2,
+  "id": "2",
   "type":"FileRule",
   "original_path":"/Users/Me/Desktop/notes.txt",
   "backup_path": "/Users/Me/OneDrive/Backup/Desktop",
   "description":"Backup 'notes.txt' to OneDrive"
 },
 {
-  "id": 3,
+  "id": "3",
   "type":"FolderRule",
   "original_path":"/Users/Me/Documents/Important",
   "backup_path": "/Users/Me/Dropbox/Backups/Important",

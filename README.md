@@ -1,10 +1,10 @@
-# Backup
+# mimeo
 
 Automate the process of backing up important files.
 
 ## Getting Started
 
-Backup can copy file contents based on three different rules.
+Mimeo can copy file contents based on three different rules.
 * FileRule: Backup a single file from one location to another
 * FolderRule: Backup a directory or folder from one location to another
 * RecentRule: Backup the N most recent files from one location to another

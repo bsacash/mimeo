@@ -118,7 +118,7 @@ class RecentRule(BaseRule):
                 os.makedirs(backup_path_time)
             except OSError as e:
                 if e.errno == errno.EEXIST: # file already exists error (this can happen if two rules try to write to the same location)
-                    logger.error(f"Rule {self.rule_id} - The directory '{backup_path_time}'' already exists (most likely from another rule in this rule file)")
+                    logger.error(f"Rule {self.rule_id} - The directory '{backup_path_time}' already exists (most likely from another rule in this rule file)")
                 else:
                     logger.error(f"Rule {self.rule_id} - There was an error when trying to create a backup location at '{backup_path_time}'")
 
@@ -126,7 +126,7 @@ class RecentRule(BaseRule):
             for index, file_path in enumerate(file_list):
                 r = shutil.copy2(file_path, backup_path_time)
                 if os.path.exists(r):
-                    logger.info(f"Rule {self.rule_id} - {index+1} of {len(file_list)}: Copied '{file_path}' from '{self.original_path}' to '{backup_path_time}")
+                    logger.info(f"Rule {self.rule_id} - {index+1} of {len(file_list)}: Copied '{file_path}' from '{self.original_path}' to '{backup_path_time}'")
 
                     original_file = file_path
                     backup_file = os.path.join(self.backup_path, file_path)

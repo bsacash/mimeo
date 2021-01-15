@@ -14,6 +14,7 @@ Modify the rules.json file to include as many rules as needed.
 Examples:
 ```
 {
+  "id": 1,
   "type":"RecentRule",
   "original_path":"/Users/Me/Downloads",
   "backup_path": "/Users/Me/iCloud/Backup/Downloads",
@@ -21,13 +22,14 @@ Examples:
   "description":"Backup the 3 most recent downloads to iCloud"
 },
 {
+  "id": 2,
   "type":"FileRule",
-  "original_path":"/Users/Me/Desktop",
+  "original_path":"/Users/Me/Desktop/notes.txt",
   "backup_path": "/Users/Me/OneDrive/Backup/Desktop",
-  "file": "notes.txt",
   "description":"Backup 'notes.txt' to OneDrive"
 },
 {
+  "id": 3,
   "type":"FolderRule",
   "original_path":"/Users/Me/Documents/Important",
   "backup_path": "/Users/Me/Dropbox/Backups/Important",
@@ -35,7 +37,7 @@ Examples:
 }
 ```
 
-Each time a rule is carried out, a Date-Time folder will be created at the backup path location. This Date-Time folder is where to copied files will be placed.
+Each time a rule is carried out, a directory will be made with a preceeding underscore containing a Date-Time folder with the copied contents. This Date-Time folder is where to copied files will be placed.
 
 ### Prerequisites
 
@@ -43,12 +45,12 @@ Each time a rule is carried out, a Date-Time folder will be created at the backu
 
 ### Running
 
-After modifying the rules.json file, run the backup.py file.
-The rules file must be in the same directory as backup.py and must be named "rules.json".
+After modifying the rules.json file, run the mimeo.py file.
+The rules file must be in the same directory as mimeo.py and must be named "rules.json".
 ```
-$ python backup.py
+$ python mimeo.py
 ```
 
 ## Errors
 
-Backup verifies that paths, filenames, and numbers are valid before copying files. If an original path, backup path, filename, or number is not valid or does not exist for a particular rule, that rule will not be carried out.  Check the console to see what part of the rule is failing.
+Mimeo verifies that paths, and filenames are valid before copying files. If an original path, or backup path is not valid or does not exist for a particular rule, that rule will not be carried out. Hashs are carried out on orignal and copied files. Check the log for details.

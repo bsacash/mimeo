@@ -37,7 +37,7 @@ Examples:
 }
 ```
 
-Each time a rule is carried out, a directory will be made with a preceeding underscore containing a Date-Time folder with the copied contents. This Date-Time folder is where to copied files will be placed.
+Each time a rule is carried out, a copy will be placed in a date-time folder.
 
 ### Prerequisites
 

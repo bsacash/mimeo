@@ -1,4 +1,4 @@
-# mimeo
+![mimeo](https://github.com/bsacash/mimeo/blob/master/assets/mimeo.png?raw=true)
 
 Automate the process of backing up important files.
 
@@ -15,29 +15,32 @@ Examples:
 ```
 {
   "id": "1",
+  "description":"Backup the 3 most recent downloads to iCloud",
   "type":"RecentRule",
   "original_path":"/Users/Me/Downloads",
-  "backup_path": "/Users/Me/iCloud/Backup/Downloads",
-  "number": 3,
-  "description":"Backup the 3 most recent downloads to iCloud"
+  "backup_path": "/Users/Me/iCloud/Backup/",
+  "directory": "Downloads"
+  "number": 3
 },
 {
   "id": "2",
   "type":"FileRule",
   "original_path":"/Users/Me/Desktop/notes.txt",
   "backup_path": "/Users/Me/OneDrive/Backup/Desktop",
+  "directory": "Notes Text File",
   "description":"Backup 'notes.txt' to OneDrive"
 },
 {
   "id": "3",
   "type":"FolderRule",
   "original_path":"/Users/Me/Documents/Important",
-  "backup_path": "/Users/Me/Dropbox/Backups/Important",
+  "backup_path": "/Users/Me/Dropbox/Backups",
+  "directory": "Important"
   "description":"Backup 'Important' folder to Dropbox"
 }
 ```
 
-Each time a rule is carried out, a copy will be placed in a date-time folder.
+Each time a rule is carried out, a copy will be placed in a date-time folder within the named directory. The tag '[mimeo]' will be added to the directory.
 
 ### Prerequisites
 

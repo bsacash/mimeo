@@ -2,25 +2,29 @@
   "rules": [
       {
       "id": 1,
+      "description":"Backup the latest 2 files from original_path to backup_path/directory",
       "type":"RecentRule",
       "original_path":"",
       "backup_path": "",
-      "number": 2,
-      "description":"Backup the latest 2 files from original_path to backup_path"
+      "directory": "",
+      "number": 2
+      
     },
       {
       "id": 2,
+      "description":"Backup the file hello.txt from original_path to backup_path/directory",
       "type":"FileRule",
       "original_path":"/hello.txt",
       "backup_path": "",
-      "description":"Backup the file hello.txt from original_path to backup_path"
+      "directory": ""
     },
       {
       "id": 3,
+      "description":"Backup the folder Documents from original_path to backup_path/directory",
       "type":"FolderRule",
       "original_path":"/Documents",
       "backup_path": "",
-      "description":"Backup the folder Documents from original_path to backup_path"
+      "directory": ""
     }
   ],
   "about": {"text":"Read the README to learn about writing rules"}

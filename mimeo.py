@@ -12,15 +12,16 @@ from helper import hash_file, hash_dir
 
 
 class BaseRule:
-    def __init__(self, original_path, backup_path, rule_id):
+    def __init__(self, original_path, backup_path, rule_id, directory):
         self.original_path = original_path
         self.backup_path = backup_path
         self.rule_id = rule_id
+        self.directory = directory
        
     # Defines a directory which is named by the current date/time in the location of the backup_path
     def _defineDirectory(self):
         time = datetime.now().strftime('%Y-%m-%d %H_%M_%S')
-        bpt = os.path.join(self.backup_path, self.subject, time)
+        bpt = os.path.join(self.backup_path, self.directory, time)
         return bpt
 
     # Verify directory/file paths exists - return a dictionary of "fail", "pass" paths, and a "fail_count"
@@ -58,10 +59,10 @@ FILE RULE
 Copy a signle file from an original location to a backup location
 '''
 class FileRule(BaseRule):
-    def __init__(self, original_path, backup_path, rule_id):
-        BaseRule.__init__(self, original_path, backup_path, rule_id)
+    def __init__(self, original_path, backup_path, rule_id, directory):
+        BaseRule.__init__(self, original_path, backup_path, rule_id, directory)
         self.filename = os.path.basename((self.original_path))
-        self.subject = self.filename.replace(".", "_") + " [mimeo]"
+        self.directory = self.directory + " [mimeo]"
         
     def run(self):
         check = self.validate_locations([self.original_path, self.backup_path])
@@ -93,10 +94,10 @@ RECENT RULE
 Copy the N most recent files from an orignal location to a backup location
 '''
 class RecentRule(BaseRule):
-    def __init__(self, original_path, backup_path, number, rule_id):
-        BaseRule.__init__(self, original_path, backup_path, rule_id)
+    def __init__(self, original_path, backup_path, number, rule_id, directory):
+        BaseRule.__init__(self, original_path, backup_path, rule_id, directory)
         self.number = number
-        self.subject = os.path.basename(os.path.normpath((self.original_path))) + " [mimeo]"
+        self.directory = self.directory + " [mimeo]"
 
     def run(self):
         check = self.validate_locations([self.original_path, self.backup_path])
@@ -139,9 +140,9 @@ FOLDER RULE
 Copy a directory from an original location to a backup location
 '''
 class FolderRule(BaseRule):
-    def __init__(self, original_path, backup_path, rule_id):
-        BaseRule.__init__(self, original_path, backup_path, rule_id)
-        self.subject = os.path.basename(os.path.normpath((self.original_path))) + " [mimeo]"
+    def __init__(self, original_path, backup_path, rule_id, directory):
+        BaseRule.__init__(self, original_path, backup_path, rule_id, directory)
+        self.directory = self.directory + " [mimeo]"
 
     def run(self):
         check = self.validate_locations([self.original_path, self.backup_path])
@@ -168,17 +169,20 @@ class FolderRule(BaseRule):
 
 
 def process(rules_file):
-    rules_json = open(rules_file, "r").read()
-    rules = json.loads(rules_json)["rules"]
+    try:
+        rules_json = open(rules_file, "r").read()
+        rules = json.loads(rules_json)["rules"]
+    except:
+        logger.error(f"Could not load {rules_file} (most likely due to a typo in the rules file)")
     for rule in rules:
         if rule["type"] == "FileRule":
-            f = FileRule(rule["original_path"], rule["backup_path"], rule["id"])
+            f = FileRule(rule["original_path"], rule["backup_path"], rule["id"], rule["directory"])  #fails here
             f.run()
         elif rule["type"] == "FolderRule":
-            f = FolderRule(rule["original_path"], rule["backup_path"], rule["id"])
+            f = FolderRule(rule["original_path"], rule["backup_path"], rule["id"], rule["directory"])
             f.run()
         elif rule["type"] == "RecentRule":
-            f = RecentRule(rule["original_path"], rule["backup_path"], rule["number"], rule["id"])
+            f = RecentRule(rule["original_path"], rule["backup_path"], rule["number"], rule["id"], rule["directory"])
             f.run()
         else:
             logger.error(f"Invalid rule type for {rule['id']}")

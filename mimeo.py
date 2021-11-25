@@ -61,7 +61,7 @@ class FileRule(BaseRule):
     def __init__(self, original_path, backup_path, rule_id):
         BaseRule.__init__(self, original_path, backup_path, rule_id)
         self.filename = os.path.basename((self.original_path))
-        self.subject = "_" + self.filename.replace(".", "_")
+        self.subject = self.filename.replace(".", "_") + " [mimeo]"
         
     def run(self):
         check = self.validate_locations([self.original_path, self.backup_path])
@@ -96,7 +96,7 @@ class RecentRule(BaseRule):
     def __init__(self, original_path, backup_path, number, rule_id):
         BaseRule.__init__(self, original_path, backup_path, rule_id)
         self.number = number
-        self.subject = "_" + os.path.basename(os.path.normpath((self.original_path)))
+        self.subject = os.path.basename(os.path.normpath((self.original_path))) + " [mimeo]"
 
     def run(self):
         check = self.validate_locations([self.original_path, self.backup_path])
@@ -141,7 +141,7 @@ Copy a directory from an original location to a backup location
 class FolderRule(BaseRule):
     def __init__(self, original_path, backup_path, rule_id):
         BaseRule.__init__(self, original_path, backup_path, rule_id)
-        self.subject = "_" + os.path.basename(os.path.normpath((self.original_path)))
+        self.subject = os.path.basename(os.path.normpath((self.original_path))) + " [mimeo]"
 
     def run(self):
         check = self.validate_locations([self.original_path, self.backup_path])

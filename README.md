@@ -49,7 +49,7 @@ Each time a rule is carried out, a copy will be placed in a date-time folder wit
 ### Running
 
 After modifying the rules.json file, run the mimeo.py file.
-The rules file must be in the same directory as mimeo.py and must be named "rules.json".
+Pass the rules file in as an argument when running mimeo.py.
 ```
 $ python mimeo.py
 ```

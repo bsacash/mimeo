@@ -4,6 +4,7 @@ import os
 import errno
 import json
 import shutil
+import argparse
 from collections import defaultdict
 from datetime import datetime
 from microlog import Logger
@@ -189,10 +190,15 @@ def process(rules_file):
 
 
 def main():
+    # instantiate logging
     global logger
     logger = Logger(file = f"logs/{datetime.now().strftime('%Y-%m-%d')}")
 
-    rules_file = "rules.json"
+    # parse argument for rules file
+    parser = argparse.ArgumentParser()
+    parser.add_argument("file", help="desired rule file to be carried out")
+    args = parser.parse_args()
+    rules_file = args.file
     logger.info(f"Processing {rules_file}")
 
     # Catch any error that would cause the file to stop
